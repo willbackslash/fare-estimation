@@ -23,9 +23,7 @@ Note: both functions iterate over the full dataset only one time
 
 ## Initial requirements
 
-python >= 3.9
-
-  
+python >= 3.9  
 
 ## Setup
 
@@ -46,7 +44,6 @@ python >= 3.9
 
 > python main.py
 
-  
 
 You will find 2 files as output
 
@@ -54,14 +51,10 @@ You will find 2 files as output
 
 - rates.csv: the final output with the calculated rates
 
-  
-  
 
 ## Running the tests
 
-> pytest .
-
-  
+> pytest --cov
 
 ## Extras
 
