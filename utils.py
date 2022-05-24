@@ -17,12 +17,27 @@ def timestamp_to_datetime(timestamp: int):
     return datetime.datetime.fromtimestamp(timestamp, tz)
 
 
-def is_valid_segment(record1, record2) -> bool:
+def get_distance(record1, record2):
     coordinate1 = (float(record1.latitude), float(record1.longitude))
     coordinate2 = (float(record2.latitude), float(record2.longitude))
-    elapsed_seconds = int(record2.timestamp) - int(record1.timestamp)
-    distance_km = haversine(coordinate1, coordinate2)
+
+    return haversine(coordinate1, coordinate2)
+
+
+def get_elapsed_time(record1, record2):
+    return int(record2.timestamp) - int(record1.timestamp)
+
+
+def get_segment_velocity(record1, record2):
+    distance_km = get_distance(record1, record2)
+    elapsed_seconds = get_elapsed_time(record1, record2)
     km_per_hour = distance_km / (elapsed_seconds / 3600)
+
+    return km_per_hour
+
+
+def is_valid_segment(record1, record2) -> bool:
+    km_per_hour = get_segment_velocity(record1, record2)
 
     return not km_per_hour > 100
 
