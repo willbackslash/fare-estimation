@@ -9,9 +9,9 @@ from utils import (
 )
 
 
-def get_final_rate(total_moving_rate, total_idle_hours):
+def get_final_rate(total_moving_rate, total_idle_hours_rate):
     flag_rate = 1.30
-    final_rate = flag_rate + total_moving_rate + total_idle_hours * 11.9
+    final_rate = flag_rate + total_moving_rate + total_idle_hours_rate
 
     if final_rate < 3.47:
         final_rate = 3.47
@@ -19,13 +19,22 @@ def get_final_rate(total_moving_rate, total_idle_hours):
     return round(final_rate, 2)
 
 
+def get_segment_total_moving_rate(distance_km, timestamp):
+    return distance_km * get_moving_rate_to_apply(timestamp)
+
+
+def get_segment_idle_hours_rate(record1, record2):
+    elapsed_seconds = get_elapsed_time(record1, record2)
+    return (elapsed_seconds / 3600) * 11.9
+
+
 def perform_rates_calculation(records):
     # initial values
     rates = {}
     idx_record1 = 0
     idx_record2 = 1
-    total_moving = 0
-    idle_hours = 0
+    total_moving_rate = 0
+    idle_hours_rate = 0
 
     while idx_record2 < len(records):
         record1 = RideRecord(*records[idx_record1].strip().split(","))
@@ -34,29 +43,30 @@ def perform_rates_calculation(records):
 
         if not records_belongs_same_route(record1, record2):
             # stores the total rate for the previous route
-            rates[ride_id] = get_final_rate(total_moving, idle_hours)
+            rates[ride_id] = get_final_rate(total_moving_rate, idle_hours_rate)
 
             # restarts initial data for next route
-            total_moving = 0
-            idle_hours = 0
+            total_moving_rate = 0
+            idle_hours_rate = 0
             idx_record1 += 1
             idx_record2 += 1
             continue
 
         distance_km = get_distance(record1, record2)
         km_per_hour = get_segment_velocity(record1, record2)
-        elapsed_seconds = get_elapsed_time(record1, record2)
 
         if km_per_hour > 10:
-            total_moving += distance_km * get_moving_rate_to_apply(record2.timestamp)
+            total_moving_rate += get_segment_total_moving_rate(
+                distance_km, record2.timestamp
+            )
         else:
-            idle_hours += elapsed_seconds / 3600
+            idle_hours_rate += get_segment_idle_hours_rate(record1, record2)
 
         idx_record1 += 1
         idx_record2 += 1
 
     # gets the final rate for the last ride
-    rates[ride_id] = get_final_rate(total_moving, idle_hours)
+    rates[ride_id] = get_final_rate(total_moving_rate, idle_hours_rate)
 
     return rates
 
