@@ -24,7 +24,7 @@ def perform_rates_calculation(records):
     rates = {}
     idx_record1 = 0
     idx_record2 = 1
-    total = 0
+    total_moving = 0
     idle_hours = 0
 
     while idx_record2 < len(records):
@@ -34,10 +34,10 @@ def perform_rates_calculation(records):
 
         if not records_belongs_same_route(record1, record2):
             # stores the total rate for the previous route
-            rates[ride_id] = get_final_rate(total, idle_hours)
+            rates[ride_id] = get_final_rate(total_moving, idle_hours)
 
             # restarts initial data for next route
-            total = 0
+            total_moving = 0
             idle_hours = 0
             idx_record1 += 1
             idx_record2 += 1
@@ -48,7 +48,7 @@ def perform_rates_calculation(records):
         elapsed_seconds = get_elapsed_time(record1, record2)
 
         if km_per_hour > 10:
-            total += distance_km * get_moving_rate_to_apply(record2.timestamp)
+            total_moving += distance_km * get_moving_rate_to_apply(record2.timestamp)
         else:
             idle_hours += elapsed_seconds / 3600
 
@@ -56,7 +56,7 @@ def perform_rates_calculation(records):
         idx_record2 += 1
 
     # gets the final rate for the last ride
-    rates[ride_id] = get_final_rate(total, idle_hours)
+    rates[ride_id] = get_final_rate(total_moving, idle_hours)
 
     return rates
 
