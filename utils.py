@@ -40,13 +40,3 @@ def is_valid_segment(record1, record2) -> bool:
     km_per_hour = get_segment_velocity(record1, record2)
 
     return not km_per_hour > 100
-
-
-def get_moving_fare_to_apply(timestamp: int):
-    timestamp_datetime = timestamp_to_datetime(timestamp)
-    time = timestamp_datetime.time()
-
-    if time > datetime.time(0, 0, 0) and time <= datetime.time(5, 0, 0):
-        return 1.30
-
-    return 0.74

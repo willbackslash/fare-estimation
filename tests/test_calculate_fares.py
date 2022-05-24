@@ -4,8 +4,8 @@ from fares import (
     get_segment_idle_hours_fare,
     get_segment_total_moving_fare,
     perform_fares_calculation,
+    get_moving_fare_to_apply,
 )
-from utils import get_moving_fare_to_apply
 
 
 def test_given_a_timestamp_it_gets_a_correct_moving_fare():

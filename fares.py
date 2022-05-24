@@ -1,11 +1,11 @@
-from haversine import haversine
+import datetime
 from domain.models import RideRecord
 from utils import (
     get_distance,
     get_elapsed_time,
-    get_moving_fare_to_apply,
     get_segment_velocity,
     records_belongs_same_route,
+    timestamp_to_datetime,
 )
 
 
@@ -26,6 +26,16 @@ def get_segment_total_moving_fare(distance_km, timestamp):
 def get_segment_idle_hours_fare(record1, record2):
     elapsed_seconds = get_elapsed_time(record1, record2)
     return (elapsed_seconds / 3600) * 11.9
+
+
+def get_moving_fare_to_apply(timestamp: int):
+    timestamp_datetime = timestamp_to_datetime(timestamp)
+    time = timestamp_datetime.time()
+
+    if time > datetime.time(0, 0, 0) and time <= datetime.time(5, 0, 0):
+        return 1.30
+
+    return 0.74
 
 
 def perform_fares_calculation(records):
