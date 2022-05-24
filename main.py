@@ -1,10 +1,10 @@
 from clean_records import clean_data
-from rates import calculate_rates
+from fares import calculate_fares
 
 
 def main():
     clean_data()
-    calculate_rates()
+    calculate_fares()
 
 
 # executes main function

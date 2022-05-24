@@ -1,53 +1,53 @@
 from domain.models import RideRecord
-from rates import (
-    get_final_rate,
-    get_segment_idle_hours_rate,
-    get_segment_total_moving_rate,
-    perform_rates_calculation,
+from fares import (
+    get_final_fare,
+    get_segment_idle_hours_fare,
+    get_segment_total_moving_fare,
+    perform_fares_calculation,
 )
-from utils import get_moving_rate_to_apply
+from utils import get_moving_fare_to_apply
 
 
-def test_given_a_timestamp_it_gets_a_correct_moving_rate():
+def test_given_a_timestamp_it_gets_a_correct_moving_fare():
     early_timestamp = 1653350651  # Tuesday, May 24, 2022 12:04:11 AM
     regular_timestamp = 1653390251  # Tuesday, May 24, 2022 11:04:11 AM
-    early_rate = get_moving_rate_to_apply(early_timestamp)
-    regular_rate = get_moving_rate_to_apply(regular_timestamp)
-    assert early_rate == 1.30
-    assert regular_rate == 0.74
+    early_fare = get_moving_fare_to_apply(early_timestamp)
+    regular_fare = get_moving_fare_to_apply(regular_timestamp)
+    assert early_fare == 1.30
+    assert regular_fare == 0.74
 
 
-def test_it_gets_a_correct_total_moving_rate_with_early_timestamp():
+def test_it_gets_a_correct_total_moving_fare_with_early_timestamp():
     early_timestamp = 1653350651  # Tuesday, May 24, 2022 12:04:11 AM
-    segment_moving_rate = get_segment_total_moving_rate(0.5, early_timestamp)
-    assert segment_moving_rate == 0.65
+    segment_moving_fare = get_segment_total_moving_fare(0.5, early_timestamp)
+    assert segment_moving_fare == 0.65
 
 
-def test_it_gets_a_correct_total_moving_rate_with_regular_timestamp():
+def test_it_gets_a_correct_total_moving_fare_with_regular_timestamp():
     regular_timestamp = 1653390251  # Tuesday, May 24, 2022 11:04:11 AM
-    segment_moving_rate = get_segment_total_moving_rate(0.1, regular_timestamp)
-    assert segment_moving_rate == 0.074
+    segment_moving_fare = get_segment_total_moving_fare(0.1, regular_timestamp)
+    assert segment_moving_fare == 0.074
 
 
-def test_it_gets_a_correct_idle_rate_for_a_segment_of_half_hour():
+def test_it_gets_a_correct_idle_fare_for_a_segment_of_half_hour():
     cleaned_records = [
         "1,37.96666,23.728308,1405594957",
         "1,37.966627,23.728263,1405596757",
     ]
     record1 = RideRecord(*cleaned_records[0].split(","))
     record2 = RideRecord(*cleaned_records[1].split(","))
-    idle_rate = get_segment_idle_hours_rate(record1, record2)
-    assert idle_rate == 5.95
+    idle_fare = get_segment_idle_hours_fare(record1, record2)
+    assert idle_fare == 5.95
 
 
-def test_it_calculates_a_minimun_ride_rate_correctly():
-    total_moving_rate = 0.5
+def test_it_calculates_a_minimun_ride_fare_correctly():
+    total_moving_fare = 0.5
     total_idle_hours = 0.1
-    rate = get_final_rate(total_moving_rate, total_idle_hours)
-    assert rate == 3.47
+    fare = get_final_fare(total_moving_fare, total_idle_hours)
+    assert fare == 3.47
 
 
-def test_it_calculates_a_rate_correctly():
+def test_it_calculates_a_fare_correctly():
     cleaned_records = [
         "1,37.96666,23.728308,1405594957",
         "1,37.966627,23.728263,1405594966",
@@ -176,11 +176,11 @@ def test_it_calculates_a_rate_correctly():
         "1,37.935597,23.625688,1405596212",
         "1,37.93549,23.625655,1405596220",
     ]
-    rates = perform_rates_calculation(cleaned_records)
-    assert rates == {"1": 11.34}
+    fares = perform_fares_calculation(cleaned_records)
+    assert fares == {"1": 11.34}
 
 
-def test_it_calculates_multiple_rates_at_time():
+def test_it_calculates_multiple_fares_at_time():
     cleaned_records = [
         "1,37.96666,23.728308,1405594957",
         "1,37.966627,23.728263,1405594966",
@@ -205,5 +205,5 @@ def test_it_calculates_multiple_rates_at_time():
         "3,37.935597,23.625688,1405596212",
         "3,37.93549,23.625655,1405596220",
     ]
-    rates = perform_rates_calculation(cleaned_records)
-    assert rates == {"1": 7.42, "2": 3.47, "3": 3.47}
+    fares = perform_fares_calculation(cleaned_records)
+    assert fares == {"1": 7.42, "2": 3.47, "3": 3.47}

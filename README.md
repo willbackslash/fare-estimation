@@ -4,9 +4,9 @@
 
 This program has two main functions
 
-- clean_data(): cleans the paths.csv before rate calculation and creates a filtered.csv file
+- clean_data(): cleans the paths.csv before fare calculation and creates a filtered.csv file
 
-- calculate_rates(): takes filtered.csv file and does the rates calculation and creates a rates.csv as output
+- calculate_fares(): takes filtered.csv file and does the fares calculation and creates a fares.csv as output
 
 ### How does it work?
 
@@ -14,10 +14,9 @@ This program has two main functions
 
 ![](diagrams/clean_algorithm.png)
 
-**calculate_rates():** Similar to the perform_clean_data function, it calculates the total moving km and idle time using two indexes that are incremented at the same time after evaluating a segment. When all the segments were evaluated it aggregates all the segments subtotals into a grand total
+**calculate_fares():** Similar to the perform_clean_data function, it calculates the total moving km and idle time using two indexes that are incremented at the same time after evaluating a segment. When all the segments were evaluated it aggregates all the segments subtotals into a grand total
 
-![](diagrams/rate_aggregation.png)
-
+![](diagrams/fare_aggregation.png)
 
 Note: both functions iterate over the full dataset only one time
 
@@ -49,7 +48,7 @@ You will find 2 files as output
 
 - filtered.csv: file with the filtered dataset
 
-- rates.csv: the final output with the calculated rates
+- fares.csv: the final output with the calculated fares
 
 
 ## Running the tests
